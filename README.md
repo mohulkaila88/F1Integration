@@ -1,18 +1,61 @@
-# Salesforce DX Project: Next Steps
+🏎️ **Salesforce F1 Data Integration**
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+This project demonstrates the Remote Process Invocation (Request/Reply) integration pattern in Salesforce using an Apex callout to the Ergast F1 API.
+It fetches Formula 1 drivers and upserts them into custom Salesforce objects.
 
-## How Do You Plan to Deploy Your Changes?
+📌 **Features**
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+1. Apex service to call an external REST API (via Named Credential).
+2. JSON parsing with strongly typed wrapper classes.
+3. Upsert into Salesforce custom objects (Driver__c).
+4. Unit test with HttpCalloutMock.
 
-## Configure Your Salesforce DX Project
+🛠️ **Setup Instructions**
+1. Create Custom Objects
+You should already have these objects:
+Driver__c
+  External_ID__c (Text, External ID, Unique)
+  First_Name__c (Text)
+  Last_Name__c (Text)
+  DateOfBirth__c (Date)
+  Nationality__c (Text)
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+2. Configure Named Credential
+Label: F1 API
+Name: F1_API
+URL: [https://ergast.com/api/f1](https://api.jolpi.ca/ergast/f1)
+Identity Type: Anonymous
+Authentication Protocol: No Authentication
 
-## Read All About It
+3. Deploy Code
+F1DataService.cls → Main service class for callout and upsert.
+F1DataServiceTest.cls → Unit test with mock response.
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+4. Run It
+From Execute Anonymous in Developer Console:
+F1DataService.fetchDrivers('2023');
+Query your Driver__c object in Salesforce → you should see new driver records.
+
+✅ **Acceptance Criteria**
+Fetching drivers inserts/updates records in Driver__c.
+Errors (invalid season, bad response, exceptions) are logged in Integration_Log__c.
+Test class covers the callout logic with HttpCalloutMock.
+
+🚀 **Next Steps**
+Extend service with fetchCircuits() and fetchRaces().
+Add Flow invocable method so admins can run imports without Apex.
+Use Continuation for long-running requests.
+Publish a Platform Event after sync for downstream subscribers.
+
+📂 **Repo Structure**
+/force-app/main/default/classes
+  ├── F1DataService.cls
+  ├── F1DataService.cls-meta.xml
+  ├── F1DataServiceTest.cls
+  └── F1DataServiceTest.cls-meta.xml
+/README.md
+
+
+👨‍💻 Author: **Mohul Kaila**
+📅 Pattern: Remote Process Invocation — Request/Reply
+🔗 API: Ergast F1 Public API

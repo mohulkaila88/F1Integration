@@ -29,7 +29,7 @@ public with sharing class F1DataService {
         List<Driver__c> toUpsert = new List<Driver__c>();
 		for (Driver d : drivers) {
             Driver__c dr = new Driver__c();
-            dr.External_ID__c = d.driverId; // assume you created an ExternalId__c field
+            dr.External_ID__c = d.driverId;
             dr.First_Name__c = d.givenName;
             dr.Last_Name__c = d.familyName;
             dr.Date_of_Birth__c = Date.valueOf(d.dateOfBirth);
@@ -41,13 +41,13 @@ public with sharing class F1DataService {
         }
     }
 
-    /*private static void logError(String msg) {
+    private static void logError(String msg) {
         insert new Integration_Log__c(
             Source__c = 'F1DataService',
             Message__c = msg,
             Status__c = 'Error'
         );
-    }*/
+    }
 
     // Wrapper for JSON
     public class F1DriverResponse {
